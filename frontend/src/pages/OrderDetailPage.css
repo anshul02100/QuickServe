@@ -1,0 +1,68 @@
+.order-detail-page { padding: 28px 0 60px; }
+.back-link { margin-bottom: 20px; padding: 8px 0; font-size: 0.875rem; }
+
+.order-detail-layout {
+  display: grid; grid-template-columns: 1fr 300px;
+  gap: 20px; align-items: start;
+}
+.order-detail-card { padding: 20px; margin-bottom: 16px; }
+.order-detail-title { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+.order-restaurant { color: var(--text-muted); font-size: 0.875rem; margin-top: 3px; }
+.order-date { color: var(--text-muted); font-size: 0.8rem; margin-top: 3px; margin-bottom: 20px; }
+
+.order-detail-card h3 { font-size: 0.875rem; font-weight: 700; margin-bottom: 14px; }
+
+/* Progress */
+.order-progress {
+  display: flex; align-items: center; gap: 0;
+}
+.progress-step {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex-shrink: 0;
+}
+.progress-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--bg);
+  transition: all 0.2s;
+}
+.progress-step.done .progress-dot { background: var(--text); border-color: var(--text); }
+.progress-step.active .progress-dot { background: var(--text); border-color: var(--text); box-shadow: 0 0 0 3px rgba(17,24,39,0.15); }
+.progress-step span { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; }
+.progress-step.done span, .progress-step.active span { color: var(--text); font-weight: 500; }
+.progress-line {
+  flex: 1; height: 2px; background: var(--border); margin-bottom: 18px;
+}
+.progress-line.done { background: var(--text); }
+
+/* Items */
+.order-items { display: flex; flex-direction: column; gap: 10px; }
+.order-item-row {
+  display: flex; align-items: center; font-size: 0.875rem;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.order-item-row:last-child { border-bottom: none; padding-bottom: 0; }
+.order-item-name { flex: 1; }
+.order-item-qty { color: var(--text-muted); margin-right: 16px; }
+.order-item-price { font-weight: 600; }
+
+/* Summary */
+.summary-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.summary-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.875rem; color: var(--text-muted);
+}
+.summary-total {
+  padding-top: 8px; border-top: 1px solid var(--border);
+  color: var(--text); font-weight: 500;
+}
+.payment-method-badge {
+  font-size: 0.8rem; color: var(--text-muted);
+  padding: 7px 10px; background: var(--bg-soft);
+  border-radius: var(--radius); border: 1px solid var(--border);
+  display: inline-block;
+}
+.delivery-addr { font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; }
+
+@media (max-width: 768px) {
+  .order-detail-layout { grid-template-columns: 1fr; }
+}

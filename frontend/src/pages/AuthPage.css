@@ -1,0 +1,57 @@
+.auth-page {
+  min-height: calc(100vh - 60px);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-soft); padding: 24px;
+}
+.auth-card {
+  width: 100%; max-width: 400px;
+  padding: 36px 32px;
+}
+.auth-header { text-align: center; margin-bottom: 28px; }
+.auth-header h1 {
+  font-size: 1.5rem; font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.auth-header p { color: var(--text-muted); font-size: 0.875rem; }
+
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+.form-group input, .form-group select, .form-group textarea {
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 0.9rem; transition: border-color 0.15s;
+  background: var(--bg);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--text);
+}
+
+.auth-submit { width: 100%; padding: 11px; font-size: 0.9rem; margin-top: 4px; }
+.auth-switch { text-align: center; margin-top: 20px; font-size: 0.875rem; color: var(--text-muted); }
+.auth-switch a { color: var(--text); font-weight: 600; }
+
+.role-selector { margin-bottom: 20px; }
+.role-label {
+  font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+  margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.role-options { display: flex; flex-direction: column; gap: 6px; }
+.role-btn {
+  display: flex; flex-direction: column;
+  padding: 10px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--bg);
+  cursor: pointer; text-align: left; transition: all 0.15s;
+}
+.role-btn:hover { border-color: var(--text); }
+.role-btn.active { border-color: var(--text); background: var(--bg-soft); }
+.role-name { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.role-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+.auth-demo {
+  margin-top: 20px; padding: 12px; background: var(--bg-soft);
+  border-radius: var(--radius); font-size: 0.8rem; color: var(--text-muted);
+  text-align: center; border: 1px solid var(--border);
+}
+.auth-demo p { margin-bottom: 6px; font-weight: 500; }
+.auth-demo code { display: block; margin-top: 3px; color: var(--text); font-size: 0.78rem; }

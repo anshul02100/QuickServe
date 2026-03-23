@@ -1,0 +1,52 @@
+/* GroupOrderPage.css */
+.group-order-page { padding: 40px 0 60px; }
+.group-order-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap; margin-bottom: 24px;
+}
+.group-restaurant { color: var(--text-muted); font-size: 1rem; }
+.share-code-box {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: var(--bg-soft); border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.participants-panel { padding: 20px; border: 1px solid var(--border); margin-bottom: 28px; }
+.participants-panel h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 14px; }
+.participants-list { display: flex; flex-direction: column; gap: 8px; }
+.participant { display: flex; justify-content: space-between; font-size: 0.9rem; }
+.participant-name { font-weight: 500; }
+.participant-items { color: var(--text-muted); font-size: 0.82rem; }
+
+.group-layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+.section-sub { font-family: var(--font-display); font-weight: 700; margin-bottom: 16px; }
+.group-menu-list { display: flex; flex-direction: column; gap: 10px; }
+.group-menu-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg);
+}
+.group-menu-item__info { display: flex; flex-direction: column; gap: 2px; }
+.group-menu-item__info strong { font-size: 0.9rem; }
+.group-menu-item__info span { font-size: 0.82rem; color: var(--text-muted); }
+
+.my-selections { padding: 20px; border: 1px solid var(--border); margin-bottom: 16px; }
+.my-selections h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 14px; }
+.no-items-msg { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px; }
+.my-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.my-item-row { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; }
+.my-item-name { flex: 1; }
+.my-item-price { font-weight: 600; }
+.remove-btn { background: none; color: #dc2626; font-size: 0.9rem; }
+.save-items-btn { width: 100%; }
+
+.place-group-card { padding: 20px; border: 1px solid var(--border); }
+.place-group-card h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 8px; }
+.place-group-note { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
+.place-group-btn { width: 100%; margin-top: 12px; }
+.address-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; resize: vertical; }
+.address-input:focus { border-color: var(--brand); outline: none; }
+
+@media (max-width: 768px) {
+  .group-layout { grid-template-columns: 1fr; }
+}

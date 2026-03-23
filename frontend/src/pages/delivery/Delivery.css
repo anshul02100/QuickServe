@@ -1,0 +1,41 @@
+.delivery-page { padding: 32px 0 60px; }
+.delivery-header { margin-bottom: 28px; }
+.delivery-header h1 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; }
+.delivery-header p  { color: var(--text-muted); margin-top: 4px; }
+
+.delivery-stats { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+.stat-card {
+  flex: 1; min-width: 100px; padding: 20px 16px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 12px; text-align: center;
+}
+.stat-card span  { display: block; font-size: 1.7rem; font-weight: 800; color: var(--brand); }
+.stat-card label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+.empty-msg { color: var(--text-muted); margin-bottom: 24px; }
+.order-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+
+.delivery-card {
+  background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 18px 20px;
+}
+.delivery-card--done { opacity: 0.7; }
+
+.delivery-card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.order-id { font-weight: 700; font-size: 0.9rem; color: var(--text-muted); }
+
+.delivery-card__info { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; font-size: 0.92rem; }
+.delivery-card__info p { margin: 0; color: var(--text); }
+
+.update-btn { width: 100%; }
+
+.status-badge {
+  font-size: 0.78rem; font-weight: 600; padding: 4px 10px;
+  border-radius: 20px; background: var(--bg-soft);
+}
+.status-badge.status-assigned   { background: #fff3cd; color: #856404; }
+.status-badge.status-picked_up  { background: #cfe2ff; color: #084298; }
+.status-badge.status-on_the_way { background: #d1ecf1; color: #0c5460; }
+.status-badge.status-delivered  { background: #d4edda; color: #155724; }
+
+.delivery-loading { text-align: center; padding: 60px; color: var(--text-muted); }

@@ -1,0 +1,66 @@
+.menu-page { padding-bottom: 60px; }
+
+.menu-header {
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+.menu-header__inner {
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.back-btn { flex-shrink: 0; padding: 8px 12px; font-size: 0.875rem; }
+.menu-header__name {
+  font-size: 1.4rem; font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.menu-header__meta { color: var(--text-muted); font-size: 0.875rem; margin-top: 4px; }
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 32px;
+  padding-top: 28px;
+  align-items: start;
+}
+
+.category-tabs {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px;
+}
+.category-tab {
+  padding: 7px 16px; border-radius: 100px;
+  border: 1px solid var(--border); background: var(--bg);
+  font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
+  transition: all 0.15s;
+}
+.category-tab:hover { border-color: var(--text); color: var(--text); }
+.category-tab.active {
+  background: var(--text); color: #fff; border-color: var(--text);
+}
+
+.menu-items-list { display: flex; flex-direction: column; gap: 12px; }
+.empty-state { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
+
+/* Cart Sidebar */
+.cart-sidebar { position: sticky; top: 88px; }
+.cart-sidebar__inner { padding: 20px; }
+.cart-sidebar__inner h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
+.cart-sidebar__count { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 14px; }
+.cart-sidebar__total {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 0; border-top: 1px solid var(--border); margin-bottom: 14px;
+  font-size: 0.875rem;
+}
+.cart-sidebar__total strong { font-size: 1rem; }
+.cart-sidebar__btn { width: 100%; padding: 11px; }
+
+@media (max-width: 768px) {
+  .menu-layout { grid-template-columns: 1fr; }
+  .cart-sidebar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
+  .cart-sidebar__inner {
+    border-radius: 0; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .cart-sidebar__count, .cart-sidebar__total { display: none; }
+  .cart-sidebar__inner h3 { flex: 1; }
+  .cart-sidebar__btn { width: auto; white-space: nowrap; }
+}

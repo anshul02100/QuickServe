@@ -1,0 +1,23 @@
+.rest-card {
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.rest-card:hover { border-color: #9ca3af; }
+.rest-card__img-wrap { position: relative; }
+.rest-card__img { width: 100%; height: 160px; object-fit: cover; }
+.rest-card__closed-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.45);
+  color: #fff; font-weight: 600; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.rest-card__body { padding: 14px; }
+.rest-card__name { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+.rest-card__cuisine { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+.rest-card__meta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;
+}
+.rest-card__rating { color: var(--text); font-weight: 600; }
+.rest-card__dot { color: var(--border); }
+.rest-card__address { font-size: 0.78rem; color: var(--text-muted); }
