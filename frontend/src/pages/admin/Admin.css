@@ -45,3 +45,8 @@
 /* Form */
 .admin-form { display: flex; flex-direction: column; gap: 14px; max-width: 480px; }
 .admin-section-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+
+/* Charts */
+.admin-charts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 32px; }
+.chart-card { padding: 20px; }
+.chart-title { font-size: 0.95rem; font-weight: 600; color: #555; margin-bottom: 16px; }

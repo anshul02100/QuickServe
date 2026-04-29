@@ -6,8 +6,9 @@ import { useAuth } from '../context/AuthContext';
 import './AuthPage.css';
 
 const ROLES = [
-  { value: 'customer',         label: 'Customer' },
-  { value: 'restaurant_admin', label: 'Restaurant Admin' },
+  { value: 'customer',         label: 'Customer',          icon: '🛒' },
+  { value: 'restaurant_admin', label: 'Restaurant Admin',  icon: '🍽️' },
+  { value: 'delivery_partner', label: 'Delivery Partner',  icon: '🛵' },
 ];
 
 const SignupPage = () => {
@@ -27,6 +28,7 @@ const SignupPage = () => {
       login(data);
       toast.success('Account created. Welcome!');
       if (data.role === 'restaurant_admin') navigate('/admin');
+      else if (data.role === 'delivery_partner') navigate('/delivery');
       else navigate('/restaurants');
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed');
@@ -46,9 +48,19 @@ const SignupPage = () => {
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label>I am signing up as</label>
-            <select name="role" value={form.role} onChange={handleChange}>
-              {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-            </select>
+            <div className="role-options role-options--three" style={{ marginTop: '8px' }}>
+              {ROLES.map(r => (
+                <button
+                  key={r.value}
+                  type="button"
+                  className={`role-btn role-btn--compact ${form.role === r.value ? 'active' : ''}`}
+                  onClick={() => setForm({ ...form, role: r.value })}
+                >
+                  <span className="role-icon">{r.icon}</span>
+                  <span className="role-name">{r.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
           <div className="form-group">
             <label>Full Name</label>

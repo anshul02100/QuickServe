@@ -7,7 +7,12 @@ const { protect } = require('../middleware/auth');
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-// POST /api/auth/signup
+// Normalise legacy role names to canonical ones
+const normaliseRole = (role) => {
+  const map = { user: 'customer', admin: 'restaurant_admin' };
+  return map[role] || role;
+};
+
 router.post('/signup', async (req, res) => {
   try {
     const { name, email, password, phone, role } = req.body;
@@ -33,7 +38,6 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
     const { email, password, expectedRole } = req.body;
@@ -41,12 +45,12 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.matchPassword(password)))
       return res.status(401).json({ message: 'Invalid email or password' });
 
-    // Normalise legacy roles
-    const roleMap = { user: 'customer', admin: 'restaurant_admin' };
-    const actualRole = roleMap[user.role] || user.role;
+    const actualRole = normaliseRole(user.role);
 
     if (expectedRole && expectedRole !== actualRole) {
-      return res.status(403).json({ message: `This account is registered as a ${actualRole.replace('_', ' ')}. Please select the correct role.` });
+      return res.status(403).json({
+        message: `This account is registered as a ${actualRole.replace(/_/g, ' ')}. Please select the correct role.`,
+      });
     }
 
     res.json({
@@ -61,12 +65,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET /api/auth/me  — get current user profile
 router.get('/me', protect, async (req, res) => {
   res.json(req.user);
 });
 
-// PUT /api/auth/me  — update profile
 router.put('/me', protect, async (req, res) => {
   try {
     const { name, phone, address } = req.body;

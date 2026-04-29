@@ -3,18 +3,34 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import MenuItemCard from '../components/restaurant/MenuItemCard';
 import './MenuPage.css';
 
 const MenuPage = () => {
   const { id } = useParams();
   const { itemCount, totalPrice } = useCart();
+  const { user, isCustomer } = useAuth();
   const navigate = useNavigate();
 
   const [restaurant, setRestaurant]   = useState(null);
   const [menuItems, setMenuItems]     = useState([]);
   const [loading, setLoading]         = useState(true);
   const [activeCategory, setCategory] = useState('All');
+  const [startingGroup, setStartingGroup] = useState(false);
+
+  const startGroupOrder = async () => {
+    if (!user) { toast.error('Please login to start a group order'); navigate('/login'); return; }
+    setStartingGroup(true);
+    try {
+      const { data } = await api.post('/group-orders', { restaurantId: id });
+      const code = data.inviteCode;
+      toast.success(`Group order created! Code: ${code}`);
+      navigate(`/group-order/${code}`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not start group order');
+    } finally { setStartingGroup(false); }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,6 +69,12 @@ const MenuPage = () => {
               {restaurant.cuisine} · {restaurant.rating} stars · {restaurant.deliveryTime} min · Min order Rs.{restaurant.minOrder}
             </p>
           </div>
+          {isCustomer && (
+            <button className="btn btn-outline btn-sm" onClick={startGroupOrder} disabled={startingGroup}
+              style={{ marginLeft: 'auto', whiteSpace: 'nowrap' }}>
+              {startingGroup ? '...' : '👥 Group Order'}
+            </button>
+          )}
         </div>
       </div>
 

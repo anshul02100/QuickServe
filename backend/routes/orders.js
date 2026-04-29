@@ -2,8 +2,6 @@ const express = require('express');
 const router  = express.Router();
 const Order   = require('../models/Order');
 const { protect } = require('../middleware/auth');
-
-// POST /api/orders  — place a new order
 router.post('/', protect, async (req, res) => {
   try {
     const { restaurantId, items, deliveryAddress, paymentMethod, groupOrderId } = req.body;
@@ -31,7 +29,6 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
-// GET /api/orders/my  — get logged-in user's orders
 router.get('/my', protect, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id })
@@ -43,7 +40,6 @@ router.get('/my', protect, async (req, res) => {
   }
 });
 
-// GET /api/orders/:id  — get single order
 router.get('/:id', protect, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -51,7 +47,6 @@ router.get('/:id', protect, async (req, res) => {
       .populate('user', 'name email');
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    // Only owner or admin can view
     if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin')
       return res.status(403).json({ message: 'Not authorized' });
 

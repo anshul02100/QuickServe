@@ -14,12 +14,9 @@ const seed = async () => {
   await Restaurant.deleteMany();
   await MenuItem.deleteMany();
   console.log('Cleared existing data');
-
-  // Create users for all three roles
   await User.create({ name: 'Test Customer',      email: 'customer@quickserve.com',  password: 'user123',     role: 'customer' });
   await User.create({ name: 'Restaurant Admin',   email: 'admin@quickserve.com',     password: 'admin123',    role: 'restaurant_admin' });
   await User.create({ name: 'Delivery Partner',   email: 'delivery@quickserve.com',  password: 'delivery123', role: 'delivery_partner' });
-  // Legacy aliases still work
   await User.create({ name: 'Legacy User',        email: 'user@foodapp.com',        password: 'user123',     role: 'customer' });
   await User.create({ name: 'Legacy Admin',       email: 'admin@foodapp.com',       password: 'admin123',    role: 'restaurant_admin' });
   console.log('Users created');

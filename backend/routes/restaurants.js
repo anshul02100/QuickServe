@@ -3,7 +3,6 @@ const router     = express.Router();
 const Restaurant = require('../models/Restaurant');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// GET /api/restaurants  — list all (with optional search/filter)
 router.get('/', async (req, res) => {
   try {
     const { search, cuisine } = req.query;
@@ -18,7 +17,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/restaurants/:id
 router.get('/:id', async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
@@ -29,7 +27,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/restaurants  — admin only
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
     const restaurant = await Restaurant.create(req.body);
@@ -39,7 +36,6 @@ router.post('/', protect, adminOnly, async (req, res) => {
   }
 });
 
-// PUT /api/restaurants/:id  — admin only
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
     const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -50,7 +46,6 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
   }
 });
 
-// DELETE /api/restaurants/:id  — admin only
 router.delete('/:id', protect, adminOnly, async (req, res) => {
   try {
     await Restaurant.findByIdAndDelete(req.params.id);

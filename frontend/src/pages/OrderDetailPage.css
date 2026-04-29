@@ -66,3 +66,11 @@
 @media (max-width: 768px) {
   .order-detail-layout { grid-template-columns: 1fr; }
 }
+
+.live-tracking-note { font-size: 0.8rem; color: #f97316; margin-top: 12px; }
+.delivery-partner-info { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; margin-top: 12px; font-size: 0.9rem; color: #9a3412; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.4); }
+}

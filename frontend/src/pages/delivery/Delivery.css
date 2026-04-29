@@ -1,41 +1,37 @@
-.delivery-page { padding: 32px 0 60px; }
-.delivery-header { margin-bottom: 28px; }
-.delivery-header h1 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; }
-.delivery-header p  { color: var(--text-muted); margin-top: 4px; }
+.delivery-page { padding: 24px 0 60px; min-height: 100vh; }
+.delivery-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.delivery-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+.delivery-header p { color: var(--text-secondary, #666); }
 
-.delivery-stats { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
-.stat-card {
-  flex: 1; min-width: 100px; padding: 20px 16px; background: var(--bg);
-  border: 1px solid var(--border); border-radius: 12px; text-align: center;
+.delivery-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.delivery-stats .stat-card { background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb); border-radius: 12px; padding: 20px; text-align: center; }
+.delivery-stats .stat-card span { display: block; font-size: 2rem; font-weight: 700; color: var(--primary, #f97316); }
+.delivery-stats .stat-card label { font-size: 0.8rem; color: var(--text-secondary, #888); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.delivery-tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 2px solid var(--border, #e5e7eb); padding-bottom: 0; }
+.tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-size: 0.95rem; color: var(--text-secondary, #666); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+.tab-btn.active { color: var(--primary, #f97316); border-bottom-color: var(--primary, #f97316); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--text, #222); }
+
+.order-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+.delivery-card { background: var(--card-bg, #fff); border: 1px solid var(--border, #e5e7eb); border-radius: 12px; padding: 20px; }
+.delivery-card--available { border-left: 4px solid #3b82f6; }
+.delivery-card--done { opacity: 0.75; }
+
+.delivery-card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.order-id { font-weight: 700; font-size: 1rem; font-family: monospace; }
+.delivery-card__info p { margin: 4px 0; font-size: 0.9rem; color: var(--text, #333); }
+.update-btn { width: 100%; margin-top: 16px; }
+.empty-msg { color: var(--text-secondary, #888); text-align: center; padding: 40px 0; font-size: 1rem; }
+.cell-sub { font-size: 0.8rem; color: var(--text-secondary, #888); }
+
+.status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+.status-confirmed { background: #dbeafe; color: #1d4ed8; }
+.status-preparing { background: #fef9c3; color: #854d0e; }
+.status-out_for_delivery { background: #ffedd5; color: #c2410c; }
+.status-delivered { background: #dcfce7; color: #166534; }
+
+@media (max-width: 768px) {
+  .delivery-stats { grid-template-columns: repeat(2, 1fr); }
+  .order-cards { grid-template-columns: 1fr; }
 }
-.stat-card span  { display: block; font-size: 1.7rem; font-weight: 800; color: var(--brand); }
-.stat-card label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-
-.section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; color: var(--text); }
-.empty-msg { color: var(--text-muted); margin-bottom: 24px; }
-.order-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
-
-.delivery-card {
-  background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px;
-  padding: 18px 20px;
-}
-.delivery-card--done { opacity: 0.7; }
-
-.delivery-card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.order-id { font-weight: 700; font-size: 0.9rem; color: var(--text-muted); }
-
-.delivery-card__info { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; font-size: 0.92rem; }
-.delivery-card__info p { margin: 0; color: var(--text); }
-
-.update-btn { width: 100%; }
-
-.status-badge {
-  font-size: 0.78rem; font-weight: 600; padding: 4px 10px;
-  border-radius: 20px; background: var(--bg-soft);
-}
-.status-badge.status-assigned   { background: #fff3cd; color: #856404; }
-.status-badge.status-picked_up  { background: #cfe2ff; color: #084298; }
-.status-badge.status-on_the_way { background: #d1ecf1; color: #0c5460; }
-.status-badge.status-delivered  { background: #d4edda; color: #155724; }
-
-.delivery-loading { text-align: center; padding: 60px; color: var(--text-muted); }

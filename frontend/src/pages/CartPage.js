@@ -6,36 +6,84 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import './CartPage.css';
 
+const loadRazorpay = () =>
+  new Promise((resolve) => {
+    if (window.Razorpay) { resolve(true); return; }
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload  = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+
 const CartPage = () => {
   const { cart, updateQuantity, clearCart, totalPrice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [address, setAddress]   = useState(user?.address || '');
-  const [payment, setPayment]   = useState('cash');
-  const [placing, setPlacing]   = useState(false);
+  const [address, setAddress] = useState(user?.address || '');
+  const [payment, setPayment] = useState('cash');
+  const [placing, setPlacing] = useState(false);
 
   const handleQuantity = (itemId, delta, currentQty) => {
     updateQuantity(itemId, currentQty + delta);
   };
 
-  const handlePlaceOrder = async () => {
+  const placeOrderAndPay = async () => {
     if (!address.trim()) { toast.error('Please enter a delivery address'); return; }
     if (!cart.items || cart.items.length === 0) { toast.error('Cart is empty'); return; }
 
     setPlacing(true);
     try {
-      const { data } = await api.post('/orders', {
+      // Always create the order first
+      const { data: order } = await api.post('/orders', {
         restaurantId:    cart.restaurant?._id || cart.restaurant,
-        items:           cart.items.map((i) => ({
-          menuItem: i.menuItem, name: i.name, price: i.price, quantity: i.quantity,
-        })),
+        items:           cart.items.map(i => ({ menuItem: i.menuItem, name: i.name, price: i.price, quantity: i.quantity })),
         deliveryAddress: address,
         paymentMethod:   payment,
       });
+
       await clearCart();
-      toast.success('Order placed successfully');
-      navigate(`/orders/${data._id}`);
+
+      if (payment === 'online') {
+        const loaded = await loadRazorpay();
+        if (!loaded) { toast.error('Payment gateway unavailable'); navigate(`/orders/${order._id}`); return; }
+
+        const { data: rzpData } = await api.post('/payment/create-order', { amount: order.totalAmount, orderId: order._id });
+
+        const options = {
+          key:      rzpData.keyId,
+          amount:   rzpData.amount,
+          currency: rzpData.currency,
+          name:     'QuickServe',
+          description: `Order #${order._id.slice(-6).toUpperCase()}`,
+          order_id: rzpData.razorpayOrderId,
+          handler: async (response) => {
+            try {
+              await api.post('/payment/verify', {
+                razorpayOrderId:   response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                orderId:           order._id,
+              });
+              toast.success('Payment successful! 🎉');
+            } catch {
+              toast.error('Payment verification failed — contact support');
+            } finally {
+              navigate(`/orders/${order._id}`);
+            }
+          },
+          prefill: { name: user?.name, email: user?.email },
+          theme: { color: '#f97316' },
+          modal: { ondismiss: () => { toast('Payment skipped — you can pay from Order Details'); navigate(`/orders/${order._id}`); } },
+        };
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', () => { toast.error('Payment failed'); navigate(`/orders/${order._id}`); });
+        rzp.open();
+      } else {
+        toast.success('Order placed successfully!');
+        navigate(`/orders/${order._id}`);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to place order');
     } finally {
@@ -127,7 +175,7 @@ const CartPage = () => {
             </div>
           </div>
 
-          <button className="btn btn-primary place-order-btn" onClick={handlePlaceOrder} disabled={placing}>
+          <button className="btn btn-primary place-order-btn" onClick={placeOrderAndPay} disabled={placing}>
             {placing ? 'Placing Order...' : `Place Order · Rs.${grandTotal}`}
           </button>
         </div>

@@ -3,9 +3,6 @@ const router   = express.Router();
 const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
 const { protect } = require('../middleware/auth');
-
-// We store cart in a simple in-memory approach per user using a Cart model
-// For simplicity, we embed it in User or use a Cart collection
 const cartSchema = new mongoose.Schema({
   user:       { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
@@ -21,7 +18,6 @@ const cartSchema = new mongoose.Schema({
 });
 const Cart = mongoose.models.Cart || mongoose.model('Cart', cartSchema);
 
-// GET /api/cart  — get current user's cart
 router.get('/', protect, async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id }).populate('restaurant', 'name');
@@ -31,7 +27,6 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-// POST /api/cart/add  — add item to cart
 router.post('/add', protect, async (req, res) => {
   try {
     const { menuItemId, quantity = 1 } = req.body;
@@ -41,19 +36,15 @@ router.post('/add', protect, async (req, res) => {
     let cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {
-      // Create new cart
       cart = new Cart({
         user: req.user._id,
         restaurant: menuItem.restaurant,
         items: [],
       });
     } else if (cart.restaurant && cart.restaurant.toString() !== menuItem.restaurant.toString()) {
-      // Different restaurant — clear cart first
       cart.restaurant = menuItem.restaurant;
       cart.items = [];
     }
-
-    // Check if item already in cart
     const existingIdx = cart.items.findIndex(
       (i) => i.menuItem.toString() === menuItemId
     );
@@ -76,7 +67,6 @@ router.post('/add', protect, async (req, res) => {
   }
 });
 
-// PUT /api/cart/item/:menuItemId  — update quantity
 router.put('/item/:menuItemId', protect, async (req, res) => {
   try {
     const { quantity } = req.body;
@@ -101,7 +91,6 @@ router.put('/item/:menuItemId', protect, async (req, res) => {
   }
 });
 
-// DELETE /api/cart  — clear cart
 router.delete('/', protect, async (req, res) => {
   try {
     await Cart.findOneAndDelete({ user: req.user._id });

@@ -1,86 +1,170 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
+import toast from 'react-hot-toast';
 import './Delivery.css';
 
-const STATUS_FLOW = ['assigned', 'picked_up', 'on_the_way', 'delivered'];
 const STATUS_LABELS = {
-  assigned:   '📋 Assigned',
-  picked_up:  '📦 Picked Up',
-  on_the_way: '🚴 On the Way',
-  delivered:  '✅ Delivered',
+  confirmed:        '✅ Confirmed',
+  preparing:        '🍳 Preparing',
+  out_for_delivery: '🚴 Out for Delivery',
+  delivered:        '✅ Delivered',
 };
 
 const DeliveryDashboard = () => {
   const { user } = useAuth();
-  const [orders, setOrders] = useState([
-    { _id: 'ORD001', customer: 'Rahul Sharma', address: '12 MG Road, Bangalore', restaurant: 'Spice Garden', items: 3, total: 520, status: 'assigned' },
-    { _id: 'ORD002', customer: 'Priya Mehta', address: '45 Koramangala', restaurant: 'Dragon Wok', items: 2, total: 320, status: 'picked_up' },
-    { _id: 'ORD003', customer: 'Amit Kumar', address: '78 Indiranagar', restaurant: 'Burger Barn', items: 1, total: 199, status: 'delivered' },
-  ]);
+  const [myOrders,  setMyOrders]  = useState([]);
+  const [available, setAvailable] = useState([]);
+  const [stats,     setStats]     = useState({ deliveredCount: 0, activeCount: 0, earnings: 0 });
+  const [loading,   setLoading]   = useState(true);
+  const [tab,       setTab]       = useState('active');
 
-  const updateStatus = (orderId, nextStatus) => {
-    setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: nextStatus } : o));
+  const load = useCallback(async () => {
+    try {
+      const [myRes, avaRes, statsRes] = await Promise.all([
+        api.get('/delivery/orders'),
+        api.get('/delivery/available'),
+        api.get('/delivery/stats'),
+      ]);
+      setMyOrders(myRes.data);
+      setAvailable(avaRes.data);
+      setStats(statsRes.data);
+    } catch {
+      toast.error('Failed to load orders');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+    const interval = setInterval(load, 15000);
+    return () => clearInterval(interval);
+  }, [load]);
+
+  const acceptOrder = async (orderId) => {
+    try {
+      await api.post(`/delivery/accept/${orderId}`);
+      toast.success('Order accepted!');
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to accept order');
+    }
   };
 
-  const active = orders.filter(o => o.status !== 'delivered');
-  const done   = orders.filter(o => o.status === 'delivered');
+  const updateStatus = async (orderId, status) => {
+    try {
+      await api.put(`/delivery/orders/${orderId}/status`, { status });
+      toast.success('Status updated!');
+      load();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update status');
+    }
+  };
+
+  const active = myOrders.filter(o => o.status !== 'delivered');
+  const done   = myOrders.filter(o => o.status === 'delivered');
+
+  if (loading) return <div className="spinner" />;
 
   return (
     <div className="delivery-page">
       <div className="container">
         <div className="delivery-header">
-          <h1>My Deliveries</h1>
-          <p>Hello, {user?.name} 👋</p>
+          <div>
+            <h1>Delivery Dashboard</h1>
+            <p>Hello, {user?.name} 👋</p>
+          </div>
+          <button className="btn btn-ghost" onClick={load}>↻ Refresh</button>
         </div>
 
         <div className="delivery-stats">
-          <div className="stat-card"><span>{active.length}</span><label>Active</label></div>
-          <div className="stat-card"><span>{done.length}</span><label>Delivered Today</label></div>
-          <div className="stat-card"><span>₹{done.reduce((s, o) => s + o.total, 0)}</span><label>Earnings</label></div>
+          <div className="stat-card"><span>{stats.activeCount}</span><label>Active</label></div>
+          <div className="stat-card"><span>{stats.deliveredCount}</span><label>Delivered</label></div>
+          <div className="stat-card"><span>₹{stats.earnings}</span><label>Earnings</label></div>
+          <div className="stat-card"><span>{available.length}</span><label>Available</label></div>
         </div>
 
-        <h2 className="section-title">Active Orders</h2>
-        {active.length === 0 && <p className="empty-msg">No active orders right now.</p>}
-        <div className="order-cards">
-          {active.map(order => {
-            const idx  = STATUS_FLOW.indexOf(order.status);
-            const next = STATUS_FLOW[idx + 1];
-            return (
-              <div key={order._id} className="delivery-card">
-                <div className="delivery-card__top">
-                  <span className="order-id">#{order._id}</span>
-                  <span className={`status-badge status-${order.status}`}>{STATUS_LABELS[order.status]}</span>
-                </div>
-                <div className="delivery-card__info">
-                  <p><strong>Customer:</strong> {order.customer}</p>
-                  <p><strong>Restaurant:</strong> {order.restaurant}</p>
-                  <p><strong>Deliver to:</strong> {order.address}</p>
-                  <p><strong>Items:</strong> {order.items} &nbsp;|&nbsp; <strong>Total:</strong> ₹{order.total}</p>
-                </div>
-                {next && (
-                  <button className="btn btn-primary update-btn" onClick={() => updateStatus(order._id, next)}>
-                    Mark as {STATUS_LABELS[next]}
-                  </button>
-                )}
-              </div>
-            );
-          })}
+        <div className="delivery-tabs">
+          {[
+            { key: 'active',    label: `Active (${active.length})` },
+            { key: 'available', label: `Available (${available.length})` },
+            { key: 'done',      label: `Completed (${done.length})` },
+          ].map(t => (
+            <button key={t.key} className={`tab-btn ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        {done.length > 0 && (
+        {tab === 'active' && (
           <>
-            <h2 className="section-title">Completed</h2>
+            {active.length === 0 && <p className="empty-msg">No active orders. Check available tab to accept one.</p>}
+            <div className="order-cards">
+              {active.map(order => (
+                <div key={order._id} className="delivery-card">
+                  <div className="delivery-card__top">
+                    <span className="order-id">#{order._id.slice(-6).toUpperCase()}</span>
+                    <span className={`status-badge status-${order.status}`}>{STATUS_LABELS[order.status] || order.status}</span>
+                  </div>
+                  <div className="delivery-card__info">
+                    <p><strong>Customer:</strong> {order.user?.name}{order.user?.phone && <span className="cell-sub"> · {order.user.phone}</span>}</p>
+                    <p><strong>Restaurant:</strong> {order.restaurant?.name}</p>
+                    <p><strong>Pickup at:</strong> {order.restaurant?.address || '—'}</p>
+                    <p><strong>Deliver to:</strong> {order.deliveryAddress}</p>
+                    <p><strong>Items:</strong> {order.items.length} &nbsp;|&nbsp; <strong>Total:</strong> ₹{order.totalAmount}</p>
+                  </div>
+                  {order.status === 'out_for_delivery' && (
+                    <button className="btn btn-primary update-btn" onClick={() => updateStatus(order._id, 'delivered')}>
+                      Mark as Delivered ✅
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {tab === 'available' && (
+          <>
+            {available.length === 0 && <p className="empty-msg">No available orders right now. Check back soon!</p>}
+            <div className="order-cards">
+              {available.map(order => (
+                <div key={order._id} className="delivery-card delivery-card--available">
+                  <div className="delivery-card__top">
+                    <span className="order-id">#{order._id.slice(-6).toUpperCase()}</span>
+                    <span className={`status-badge status-${order.status}`}>{STATUS_LABELS[order.status] || order.status}</span>
+                  </div>
+                  <div className="delivery-card__info">
+                    <p><strong>Restaurant:</strong> {order.restaurant?.name}</p>
+                    <p><strong>Pickup at:</strong> {order.restaurant?.address || '—'}</p>
+                    <p><strong>Deliver to:</strong> {order.deliveryAddress}</p>
+                    <p><strong>Items:</strong> {order.items.length} &nbsp;|&nbsp; <strong>Total:</strong> ₹{order.totalAmount}</p>
+                  </div>
+                  <button className="btn btn-primary update-btn" onClick={() => acceptOrder(order._id)}>
+                    Accept Order 🚴
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {tab === 'done' && (
+          <>
+            {done.length === 0 && <p className="empty-msg">No completed deliveries yet.</p>}
             <div className="order-cards">
               {done.map(order => (
                 <div key={order._id} className="delivery-card delivery-card--done">
                   <div className="delivery-card__top">
-                    <span className="order-id">#{order._id}</span>
-                    <span className="status-badge status-delivered">{STATUS_LABELS.delivered}</span>
+                    <span className="order-id">#{order._id.slice(-6).toUpperCase()}</span>
+                    <span className="status-badge status-delivered">✅ Delivered</span>
                   </div>
                   <div className="delivery-card__info">
-                    <p><strong>Customer:</strong> {order.customer}</p>
-                    <p><strong>Restaurant:</strong> {order.restaurant}</p>
-                    <p><strong>Total:</strong> ₹{order.total}</p>
+                    <p><strong>Customer:</strong> {order.user?.name}</p>
+                    <p><strong>Restaurant:</strong> {order.restaurant?.name}</p>
+                    <p><strong>Total:</strong> ₹{order.totalAmount}</p>
+                    <p className="cell-sub">{new Date(order.updatedAt).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</p>
                   </div>
                 </div>
               ))}

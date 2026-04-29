@@ -1,7 +1,5 @@
 const jwt  = require('jsonwebtoken');
 const User = require('../models/User');
-
-// Protect route — requires valid JWT
 const protect = async (req, res, next) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
@@ -19,13 +17,11 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Restaurant admin only (supports both old 'admin' and new 'restaurant_admin')
 const adminOnly = (req, res, next) => {
   if (req.user && (req.user.role === 'restaurant_admin' || req.user.role === 'admin')) return next();
   res.status(403).json({ message: 'Restaurant admin access only' });
 };
 
-// Delivery partner only
 const deliveryOnly = (req, res, next) => {
   if (req.user && req.user.role === 'delivery_partner') return next();
   res.status(403).json({ message: 'Delivery partner access only' });

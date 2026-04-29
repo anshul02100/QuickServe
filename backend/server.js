@@ -19,6 +19,9 @@ app.use('/api/cart',        require('./routes/cart'));
 app.use('/api/orders',      require('./routes/orders'));
 app.use('/api/group-orders',require('./routes/groupOrders'));
 app.use('/api/admin',       require('./routes/admin'));
+app.use('/api/delivery',    require('./routes/delivery'));
+app.use('/api/payment',     require('./routes/payment'));
+app.use('/api/analytics',   require('./routes/analytics'));
 
 // Health check
 app.get('/', (req, res) => res.json({ message: 'QickServe API running' }));

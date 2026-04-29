@@ -6,8 +6,9 @@ import { useAuth } from '../context/AuthContext';
 import './AuthPage.css';
 
 const ROLES = [
-  { value: 'customer',         label: 'Customer',          desc: 'Browse menus and place orders' },
-  { value: 'restaurant_admin', label: 'Restaurant Admin',  desc: 'Manage items, orders and sales' },
+  { value: 'customer',         label: 'Customer',          desc: 'Browse menus and place orders',       icon: '🛒' },
+  { value: 'restaurant_admin', label: 'Restaurant Admin',  desc: 'Manage items, orders and sales',      icon: '🍽️' },
+  { value: 'delivery_partner', label: 'Delivery Partner',  desc: 'Accept & deliver orders on the go',   icon: '🛵' },
 ];
 
 const LoginPage = () => {
@@ -26,8 +27,9 @@ const LoginPage = () => {
     try {
       const { data } = await api.post('/auth/login', { ...form, expectedRole: selectedRole });
       login(data);
-      toast.success(`Welcome back, ${data.name}`);
+      toast.success(`Welcome back, ${data.name}!`);
       if (data.role === 'restaurant_admin') navigate('/admin');
+      else if (data.role === 'delivery_partner') navigate('/delivery');
       else navigate('/restaurants');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
@@ -46,7 +48,7 @@ const LoginPage = () => {
 
         <div className="role-selector">
           <p className="role-label">Sign in as</p>
-          <div className="role-options">
+          <div className="role-options role-options--three">
             {ROLES.map(r => (
               <button
                 key={r.value}
@@ -54,6 +56,7 @@ const LoginPage = () => {
                 className={`role-btn ${selectedRole === r.value ? 'active' : ''}`}
                 onClick={() => setSelectedRole(r.value)}
               >
+                <span className="role-icon">{r.icon}</span>
                 <span className="role-name">{r.label}</span>
                 <span className="role-desc">{r.desc}</span>
               </button>
@@ -86,7 +89,8 @@ const LoginPage = () => {
         <div className="auth-demo">
           <p>Demo accounts</p>
           <code>customer@quickserve.com / user123</code><br/>
-          <code>admin@quickserve.com / admin123</code>
+          <code>admin@quickserve.com / admin123</code><br/>
+          <code>delivery@quickserve.com / delivery123</code>
         </div>
       </div>
     </div>
