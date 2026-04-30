@@ -60,7 +60,7 @@ const seed = async () => {
   ]);
   console.log('Menu items created');
 
-  console.log('\n✅ QickServe seed complete!');
+  console.log('\n✅ QuickServe seed complete!');
   console.log('─────────────────────────────────────');
   console.log('Customer:         customer@quickserve.com  / user123');
   console.log('Restaurant Admin: admin@quickserve.com     / admin123');
